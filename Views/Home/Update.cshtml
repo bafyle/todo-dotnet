@@ -1,0 +1,24 @@
+
+@model todo.Models.Task
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    @using (Html.BeginForm("Update", "Home", new {id=Model?.TaskId}))
+    {
+        @Html.AntiForgeryToken()
+        @Html.LabelFor(model => model.TaskDescription, "Task description")
+        @Html.EditorFor(model => model.TaskDescription)
+
+        @Html.LabelFor(model => model.Completed, "Completed")
+        @Html.EditorFor(model => model.Completed)
+        <input type="submit" value="Save">
+    }
+</body>
+</html>

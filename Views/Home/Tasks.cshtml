@@ -1,0 +1,177 @@
+@{
+    ViewData["Title"] = "Todo list";
+    ViewData["ApplicationName"] = "Todo list";
+    
+}
+@section header_links{
+    <link href="~/css/site.css" rel="stylesheet">
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-white">
+                <div class="card-body">
+                    <form action="javascript:void(0);">
+                        <input id="new-task-input" type="text" class="form-control add-task" placeholder="New Task...">
+                    </form>
+                    <ul class="nav nav-pills todo-nav">
+                        <li role="presentation" class="nav-item all-task active"><a href="#" class="nav-link">All</a></li>
+                        <li role="presentation" class="nav-item active-task"><a href="#" class="nav-link">Active</a></li>
+                        <li role="presentation" class="nav-item completed-task"><a href="#" class="nav-link">Completed</a></li>
+                    </ul>
+                    <div class="todo-list">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+function deleteTask(id) 
+{
+    $.ajax({
+        url:"/api/tasks/"+id+"/delete",
+        method:"DELETE"
+        
+    }).done(function(data)
+    {
+        if(data.error)
+            alert(data.message);
+        else
+            $("#item-id-"+id).remove();
+    
+    }).fail(function(data){
+        console.log(data);
+    });
+}
+
+function addClickActionListerToCheckBox(newTask)
+{
+    newTask.children(".checker").first().children().children("input").click(function()
+    {
+        let thisID = newTask.attr('id').split("-")[2]
+        let $currentObject = $(this);
+        $.ajax({
+            url:"/api/tasks/"+thisID,
+            method:"PUT"
+            
+        }).done(function(data)
+        {
+            if(data.error)
+                alert(data.message);
+            else
+                newTask.toggleClass('complete');
+        
+        }).fail(function(data){
+            console.log(data);
+        });
+    });
+}
+function addCompleteActionListenerToCheckboxes()
+{
+    $('.checker').each(function(i, obj)
+    {
+        $(obj).click(function()
+        {
+            let thisID = $(this).parent().attr('id').split("-")[2]
+            let $currentObject = $(this);
+            $.ajax({
+                url:"/api/tasks/"+thisID,
+                method:"PUT"
+                
+            }).done(function(data)
+            {
+                if(data.error)
+                    alert(data.message);
+                else
+                    $currentObject.parent().toggleClass('complete');
+            
+            }).fail(function(data){
+                console.log(data);
+            });
+        })
+    });
+}
+$( document ).ready(function() {
+    
+    "use strict";
+    function getDeleteIcon(id)
+    {
+        return `<svg onclick="deleteTask(${id})" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash remove-todo-item" viewBox="0 0 16 16">
+        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+    </svg>`
+    }
+    var todo = function() 
+    { 
+        $('.todo-nav .all-task').click(function() {
+            $('.todo-list').removeClass('only-active');
+            $('.todo-list').removeClass('only-complete');
+            $('.todo-nav li.active').removeClass('active');
+            $(this).addClass('active');
+        });
+        
+        $('.todo-nav .active-task').click(function() {
+            $('.todo-list').removeClass('only-complete');
+            $('.todo-list').addClass('only-active');
+            $('.todo-nav li.active').removeClass('active');
+            $(this).addClass('active');
+        });
+        
+        $('.todo-nav .completed-task').click(function() {
+            $('.todo-list').removeClass('only-active');
+            $('.todo-list').addClass('only-complete');
+            $('.todo-nav li.active').removeClass('active');
+            $(this).addClass('active');
+        });
+        
+        $('#uniform-all-complete input').click(function() {
+            if($(this).is(':checked')) {
+                $('.todo-item .checker span:not(.checked) input').click();
+            } else {
+                $('.todo-item .checker span.checked input').click();
+            }
+        });
+    };
+    
+    $.ajax({
+            url:"/api/tasks",
+            method:"GET"
+            
+        }).done(function(data)
+        {
+            for(let i = 0; i <data.length; i++)
+            {
+                let task = data[i];
+                let $newTask = $('<div class="todo-item'+ (task.completed? " complete" : "")+ '" id="item-id-' + task.taskId+'"><div class="checker"><span class=""><input type="checkbox"'+(task.completed? " checked" : "")+'></span></div> <span>' + task.taskDescription + '</span> <a href="javascript:void(0);" class="float-right remove-todo-item"><i class="icon-close"></i></a>'+getDeleteIcon(task.taskId)+'</div>');
+                $(".todo-list").append($newTask);
+            }
+            todo();
+            addCompleteActionListenerToCheckboxes();
+           
+        });
+    $(".add-task").keypress(function (e) {
+        if ((e.which == 13)&&(!$(this).val().length == 0)) {
+            
+            $.ajax({
+                url:"/api/tasks/create",
+                method:"POST",
+                data:"task="+$(this).val()
+            }).done(function(data)
+            {
+                let $newTask = $('<div class="todo-item" id="item-id-' + data.task.taskId+'"><div class="checker"><span class=""><input type="checkbox"></span></div> <span>' + data.task.taskDescription + '</span> <a href="javascript:void(0);" class="float-right remove-todo-item"><i class="icon-close"></i></a>'+getDeleteIcon(data.task.taskId)+'</div>');
+                $(".todo-list").append($newTask);
+                addClickActionListerToCheckBox($newTask)
+                todo();
+                @* addCompleteActionListenerToCheckboxes(); *@
+            })
+            $(this).val('');
+        } else if(e.which == 13) {
+            alert('Please enter new task');
+        }
+    });
+});
+</script>
