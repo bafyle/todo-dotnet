@@ -1,0 +1,19 @@
+@model todo.UserRegistrationModel;
+
+@{
+    ViewData["Title"] = "Register";
+}
+@using(Html.BeginForm("Register", "Users", null, FormMethod.Post, true, null))
+{
+    @Html.LabelFor(m=>m.Email);
+    @Html.TextBoxFor(m=>m.Email, null, new {@Required=true, @type="email"});
+
+    @Html.LabelFor(m=>m.Password);
+    @Html.PasswordFor(m=>m.Password, new {@Required=true, });
+
+    @Html.LabelFor(m=>m.ConfirmPassword);
+    @Html.PasswordFor(m=>m.ConfirmPassword, new {@Required=true, });
+
+    <input type="submit" value="Login">
+
+}
