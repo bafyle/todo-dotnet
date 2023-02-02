@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace todo.Controllers;
 
-public class HomeController : Controller
+public class TaskController : Controller
 {
     private AppDbContext db;
 
@@ -16,7 +16,7 @@ public class HomeController : Controller
     {
         return User.FindFirstValue(ClaimTypes.NameIdentifier);
     }
-    public HomeController(AppDbContext db)
+    public TaskController(AppDbContext db)
     {
         this.db = db;
     }
@@ -147,7 +147,7 @@ public class HomeController : Controller
     [Authorize]
     public IActionResult Index()
     {
-        return View("Tasks");
+        return View();
     }
 
 }

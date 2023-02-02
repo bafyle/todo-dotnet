@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Todo list";
+}
+@model todo.LoginViewModel;
+
+
+@using(Html.BeginForm("Login", "Users", null, FormMethod.Post, true, null))
+{
+    @Html.LabelFor(m=>m.email);
+    @Html.TextBoxFor(m=>m.email, null, new {@Required=true, });
+
+    @Html.LabelFor(m=>m.password);
+    @Html.PasswordFor(m=>m.password, new {@Required=true, });
+    <input type="submit" value="Login">
+
+}
