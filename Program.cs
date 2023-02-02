@@ -10,13 +10,13 @@ var connectionString = builder.Configuration.GetConnectionString("AppDbContextCo
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-builder.Services.AddAntiforgery(options =>
-{
-    // Set Cookie properties using CookieBuilder properties†.
-    options.FormFieldName = "AntiforgeryFieldname";
-    options.HeaderName = "X-CSRF-TOKEN-HEADERNAME";
-    options.SuppressXFrameOptionsHeader = false;
-});
+// builder.Services.AddAntiforgery(options =>
+// {
+//     // Set Cookie properties using CookieBuilder properties†.
+//     options.FormFieldName = "AntiforgeryFieldname";
+//     options.HeaderName = "X-CSRF-TOKEN-HEADERNAME";
+//     options.SuppressXFrameOptionsHeader = false;
+// });
 
 
 var app = builder.Build();
@@ -34,7 +34,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Tasks}/{action=Index}/{id?}");
 app.UseEndpoints(endpoints=>{
     endpoints.MapRazorPages();
 });
