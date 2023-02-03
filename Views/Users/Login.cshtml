@@ -3,9 +3,10 @@
 }
 @model todo.LoginViewModel;
 
-
+<p>@TempData["message"]</p>
 @using(Html.BeginForm("Login", "Users", null, FormMethod.Post, true, null))
 {
+    @Html.ValidationSummary()
     @Html.LabelFor(m=>m.email);
     @Html.TextBoxFor(m=>m.email, null, new {@Required=true, });
 

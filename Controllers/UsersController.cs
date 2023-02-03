@@ -79,6 +79,7 @@ public class UsersController : Controller
             }
             return View(model);
         }
+        TempData["message"] = "Account created successfully, you can login now";
         return RedirectToAction("Login", "users");
     }
 

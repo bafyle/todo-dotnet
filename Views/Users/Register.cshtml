@@ -5,6 +5,7 @@
 }
 @using(Html.BeginForm("Register", "Users", null, FormMethod.Post, true, null))
 {
+    @Html.ValidationSummary()
     @Html.LabelFor(m=>m.Email);
     @Html.TextBoxFor(m=>m.Email, null, new {@Required=true, @type="email"});
 
